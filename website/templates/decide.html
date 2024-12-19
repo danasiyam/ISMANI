@@ -1,0 +1,45 @@
+{% extends "base.html" %} {% block title %}decision{% endblock %}
+{% block styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/decision.css') }}">
+{% endblock %}
+
+ {% block content%}
+ <div class="custom-container">
+    <img src="{{ url_for('static', filename='images/10100507.svg') }}" class="page_IMG">
+
+    <!-- First decision block -->
+    <div class="decision-container">
+        <div class="decision">
+            <div class="select-txt">
+                <h5>ابدأ </h5>
+                <h5>التعلم </h5>
+            </div>
+            <div class="arrow"><i class="fa-solid fa-caret-down"></i></div>
+        </div>
+        <ul class="options">
+            <li><a href="{{ url_for('views.learn') }}">تعلم احرف اللغة العربية</a></li>
+
+            <li><a href="LearnLetters.html">تعلم بعض الكلمات باللغة العربية</a></li>
+           
+        </ul>
+    </div>
+
+    <!-- Second decision block -->
+    <div class="decision-container">
+        <div class="decision">
+            <div class="select-txt">
+                <h5>ابدأ </h5>
+                <h5>التحدث</h5>
+            </div>
+            <div class="arrow"><i class="fa-solid fa-caret-down"></i></div>
+        </div>
+        <ul class="options">
+            <li><a href="LearnLetters.html">تحدث باستخدام احرف اللغة العربية</a></li>
+            
+            
+        </ul>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='js/decision.js') }}"></script>
+  
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %} {% block title %}decision{% endblock %}
+{% block styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/WebCam.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="webcam-box">
+        <video id="webcam" autoplay playsinline></video>
+    </div>
+    <div class="terminal-box" id="terminal">
+        <p>Detected Letters will appear here...</p>
+    </div>
+    <button id="start-webcam-btn" class="btn btn-primary mt-3">Start</button>
+    <button id="stop-webcam-btn" class="btn btn-danger mt-3" style="display: none;">Stop</button> 
+</div>
+<script src="{{ url_for('static', filename='js/WebCam.js') }}"></script>
+{% endblock %}
