@@ -6,9 +6,11 @@ const stopWebcamButton = document.getElementById('stop-webcam-btn'); // Stop but
 let isWebcamStarted = false;
 let intervalId = null;
 
-// Function to update the terminal with the detected word
-function updateTerminal(word) {
-    terminalElement.innerHTML = `<p>Detected: ${word}</p>`;
+// Function to update the terminal with the detected letters and actions
+function updateTerminal(detectedLetters, detectedActions) {
+    terminalElement.innerHTML = `
+        <p> ${detectedLetters || 'None'}</p>
+    `;
 }
 
 // Function to start the webcam
@@ -69,21 +71,21 @@ async function sendFrameToServer() {
         }
 
         const result = await response.json();
-        if (result.word) {
-            updateTerminal(result.word); 
+        if (result.letters ) {
+            updateTerminal(result.letters); 
         } else if (result.error) {
             console.error(result.error);
-            updateTerminal('Detection failed.');
+            updateTerminal('Detection failed.', null);
         }
     } catch (error) {
         console.error('Error sending frame:', error);
-        updateTerminal('Error processing frame.');
+        updateTerminal('Error processing frame.', null);
     }
 }
 
 // Function to start detection
 function startDetection() {
-    intervalId = setInterval(sendFrameToServer, 6000); 
+    intervalId = setInterval(sendFrameToServer, 3000); // Reduce interval for smoother detection
 }
 
 // Event listeners for start and stop buttons

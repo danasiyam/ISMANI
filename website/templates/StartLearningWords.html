@@ -1,0 +1,107 @@
+{% extends "base.html" %} {% block title %}Learn{% endblock %}
+{% block styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/learning.css') }}">
+{% endblock %}
+
+ {% block content%}
+ <div class="letter-container" >
+    <!-- Each letter's container with video thumbnail and "Try Yourself" button -->
+    <div class="letter-box" data-letter="الألف" data-video="{{ url_for('static', filename='videos/Alef.MOV') }}">
+        <h3>السلام عليكم</h3>
+        <div class="video-overlay">
+            <img src="{{ url_for('static', filename='images/alef.jpg') }}" alt="Letter A sign">
+            <button class="play-button">▶</button>
+        </div>
+        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
+        </button>
+    </div>
+
+    <div class="letter-box" data-letter="الباء" data-video="{{ url_for('static', filename='videos/ba2.MOV') }}">
+        <h3>حرف الباء</h3>
+        <div class="video-overlay">
+            <img src="{{ url_for('static', filename='images/ba2.jpg') }}" alt="Letter A sign">
+            <button class="play-button">▶</button>
+        </div>
+        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
+        </button>
+    </div>
+
+    
+    
+    <div class="letter-box" data-letter="التاء" data-video="{{ url_for('static', filename='videos/ta22.MOV') }}">
+        <h3>حرف التاء</h3>
+        <div class="video-overlay">
+            <img src="{{ url_for('static', filename='images/ta22.jpg') }}" alt="Letter A sign">
+            <button class="play-button">▶</button>
+        </div>
+        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
+        </button>
+    </div>
+
+
+    <div class="letter-box" data-letter="الثاء" data-video="{{ url_for('static', filename='videos/tha22.MOV') }}">
+        <h3>حرف الثاء</h3>
+        <div class="video-overlay">
+            <img src="{{ url_for('static', filename='images/tha22.jpg') }}" alt="Letter A sign">
+            <button class="play-button">▶</button>
+        </div>
+        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
+        </button>
+    </div>
+
+
+    <div class="letter-box" data-letter="الجيم" data-video="{{ url_for('static', filename='videos/jeem.MOV') }}">
+        <h3>حرف الجيم</h3>
+        <div class="video-overlay">
+            <img src="{{ url_for('static', filename='images/jeem.jpg') }}" alt="Letter A sign">
+            <button class="play-button">▶</button>
+        </div>
+        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
+        </button>
+    </div>
+
+    <div class="letter-box" data-letter="الحاء" data-video="{{ url_for('static', filename='videos/7a2.MOV') }}">
+        <h3>حرف الحاء</h3>
+        <div class="video-overlay">
+            <img src="{{ url_for('static', filename='images/7a2.jpg') }}" alt="Letter A sign">
+            <button class="play-button">▶</button>
+        </div>
+        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
+        </button>
+    </div>
+
+
+   <div class="letter-box" data-letter="الخاء" data-video="{{ url_for('static', filename='videos/5a2.MOV') }}">
+        <h3>حرف الخاء</h3>
+        <div class="video-overlay">
+            <img src="{{ url_for('static', filename='images/5a2.jpg') }}" alt="Letter A sign">
+            <button class="play-button">▶</button>
+        </div>
+        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
+        </button>
+    </div>
+
+
+    <div class="letter-box" data-letter="الدال" data-video="{{ url_for('static', filename='videos/dal.MOV') }}">
+        <h3>حرف الدال</h3>
+        <div class="video-overlay">
+            <img src="{{ url_for('static', filename='images/dal.jpg') }}" alt="Letter A sign">
+            <button class="play-button">▶</button>
+        </div>
+        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
+        </button>
+    </div>
+
+
+    
+</div>
+
+<!-- Partial view for the video -->
+<div id="video-viewer" class="video-viewer">
+    <h2 id="letter-title">حرف </h2>
+    <video id="video-preview" controls></video>
+    <button id="close-viewer">إغلاق</button>
+</div>
+
+<script src="{{ url_for('static', filename='js/learning.js') }}"></script>
+{% endblock %}
