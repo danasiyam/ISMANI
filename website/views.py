@@ -1,19 +1,20 @@
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify
+from flask_login import login_required, current_user
 import cv2
 import numpy as np
 import time
-import tensorflow as tf
+# import tensorflow as tf
 from ultralytics import YOLO
-import mediapipe as mp
+# import mediapipe as mp
 
 views = Blueprint('views', __name__)
 
 # Load your YOLOv8 model for letters
-yolo_model = YOLO('D:/Upda/Gradproject/model/best.pt')
+yolo_model = YOLO('C:/Users/نور/Desktop/BackEnd/model/best.pt')
 
 
 # Mediapipe holistic for extracting keypoints
-mp_holistic = mp.solutions.holistic
+# mp_holistic = mp.solutions.holistic
 
 # Server-side variables for letter detection
 letters = []
@@ -40,8 +41,18 @@ def learnWords():
     return render_template("StartLearningWords.html")
 
 @views.route('/decide')
+@login_required
 def decide():
     return render_template("decide.html")
+
+
+@views.route('/check_auth')
+def check_auth():
+    if current_user.is_authenticated:
+        return redirect(url_for('views.decide'))  
+    else:
+        return redirect(url_for('auth.login'))  
+
 
 @views.route('/practice')
 def practice():
