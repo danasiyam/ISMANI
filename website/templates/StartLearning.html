@@ -4,348 +4,59 @@
 {% endblock %}
 
  {% block content%}
- <div class="letter-container" >
-    <!-- Each letter's container with video thumbnail and "Try Yourself" button -->
-    <div class="letter-box" data-letter="الألف" data-video="{{ url_for('static', filename='videos/Alef.MOV') }}">
-        <h3>حرف الألف</h3>
+ {% set letters = [
+    {"name": "الالف", "video": "videos/Alef.MOV", "image": "images/alef.jpg"},
+    {"name": "الباء", "video": "videos/ba2.MOV", "image": "images/ba2.jpg"},
+    {"name": "التاء", "video": "videos/ta22.MOV", "image": "images/ta22.jpg"},
+    {"name": "الثاء", "video": "videos/tha22.MOV", "image": "images/tha22.jpg"},
+    {"name": "الجيم", "video": "videos/jeem.MOV", "image": "images/jeem.jpg"},
+    {"name": "الحاء", "video": "videos/7a2.MOV", "image": "images/7a2.jpg"},
+    {"name": "الخاء", "video": "videos/5a2.MOV", "image": "images/5a2.jpg"},
+    {"name": "الدال", "video": "videos/dal.MOV", "image": "images/dal.jpg"},
+    {"name": "الذال", "video": "videos/thal.MOV", "image": "images/thal.jpg"},
+    {"name": "الراء", "video": "videos/ra2.MOV", "image": "images/ra2.jpg"},
+    {"name": "الزين", "video": "videos/zain.MOV", "image": "images/zain.jpg"},
+    {"name": "السين", "video": "videos/seen.MOV", "image": "images/seen.jpg"},
+    {"name": "الشين", "video": "videos/sheen.MOV", "image": "images/sheen.jpg"},
+    {"name": "الصاد", "video": "videos/sad.MOV", "image": "images/sad.jpg"},
+    {"name": "الضاد", "video": "videos/daad.MOV", "image": "images/Dad.png"},
+    {"name": "الطاء", "video": "videos/ta2.MOV", "image": "images/tha2.jpg"},
+    {"name": "الظاء", "video": "videos/tha2.MOV", "image": "images/tha222.jpg"},
+    {"name": "العين", "video": "videos/Ain.MOV", "image": "images/ain.jpg"},
+    {"name": "الغين", "video": "videos/gheen.MOV", "image": "images/ghain.jpg"},
+    {"name": "الفاء", "video": "videos/fa2.MOV", "image": "images/fa2.jpg"},
+    {"name": "القاف", "video": "videos/qaf.MOV", "image": "images/qaf.jpg"},
+    {"name": "الكاف", "video": "videos/kaf.MOV", "image": "images/kaf.jpg"},
+    {"name": "اللام", "video": "videos/laam.MOV", "image": "images/laam.jpg"},
+    {"name": "الميم", "video": "videos/meem.MOV", "image": "images/meem.jpg"},
+    {"name": "النون", "video": "videos/noon.MOV", "image": "images/noon.png"},
+    {"name": "الهاء", "video": "videos/ha2.MOV", "image": "images/ha22.jpg"},
+    {"name": "الواو", "video": "videos/waw.MOV", "image": "images/waw.jpg"},
+    {"name": "الياء", "video": "videos/ya2.MOV", "image": "images/ya2.jpg"},
+    {"name": "التاء المبربوطة", "video": "videos/tahmarbota.MOV", "image": "images/ta2marbouta.jpg"},
+    {"name": "لا", "video": "videos/laa.MOV", "image": "images/laa.jpg"},
+
+
+
+
+] %}
+<div class="letter-container">
+    {% for letter in letters %}
+    <div class="letter-box" data-letter="{{ letter.name }}" data-video="{{ url_for('static', filename=letter.video) }}">
+        <h3>حرف {{ letter.name }}</h3>
         <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/alef.jpg') }}" alt="Letter A sign">
+            <img src="{{ url_for('static', filename=letter.image) }}" alt="Sign for {{ letter.name }}">
             <button class="play-button">▶</button>
         </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
+        <button class="try-button">
+            <a href="{{ url_for('views.practice', mode='learn', expected_letter=letter.name) }}">جرّب بنفسك</a>
         </button>
+        
+        
     </div>
-
-    <div class="letter-box" data-letter="الباء" data-video="{{ url_for('static', filename='videos/ba2.MOV') }}">
-        <h3>حرف الباء</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/ba2.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-    
-    
-    <div class="letter-box" data-letter="التاء" data-video="{{ url_for('static', filename='videos/ta22.MOV') }}">
-        <h3>حرف التاء</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/ta22.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-
-    <div class="letter-box" data-letter="الثاء" data-video="{{ url_for('static', filename='videos/tha22.MOV') }}">
-        <h3>حرف الثاء</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/tha22.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-
-    <div class="letter-box" data-letter="الجيم" data-video="{{ url_for('static', filename='videos/jeem.MOV') }}">
-        <h3>حرف الجيم</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/jeem.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-    <div class="letter-box" data-letter="الحاء" data-video="{{ url_for('static', filename='videos/7a2.MOV') }}">
-        <h3>حرف الحاء</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/7a2.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-
-   <div class="letter-box" data-letter="الخاء" data-video="{{ url_for('static', filename='videos/5a2.MOV') }}">
-        <h3>حرف الخاء</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/5a2.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-
-    <div class="letter-box" data-letter="الدال" data-video="{{ url_for('static', filename='videos/dal.MOV') }}">
-        <h3>حرف الدال</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/dal.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-    <div class="letter-box" data-letter="الذال" data-video="{{ url_for('static', filename='videos/thal.MOV') }}">
-        <h3>حرف الذال</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/thal.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-    <div class="letter-box" data-letter="الراء" data-video="{{ url_for('static', filename='videos/ra2.MOV') }}">
-        <h3>حرف الراء</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/ra2.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-     <div class="letter-box" data-letter="الزين" data-video="{{ url_for('static', filename='videos/zain.MOV') }}">
-        <h3>حرف الزين</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/zain.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-    <div class="letter-box" data-letter="السين" data-video="{{ url_for('static', filename='videos/seen.MOV') }}">
-        <h3>حرف السين</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/seen.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-     <div class="letter-box" data-letter="الشين" data-video="{{ url_for('static', filename='videos/sheen.MOV') }}">
-        <h3>حرف الشين</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/sheen.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-   
-    <div class="letter-box" data-letter="الشين" data-video="{{ url_for('static', filename='videos/sheen.MOV') }}">
-        <h3>حرف الشين</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/sheen.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-
-    <div class="letter-box" data-letter="الشين" data-video="{{ url_for('static', filename='videos/sheen.MOV') }}">
-        <h3>حرف الشين</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/sheen.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-    <div class="letter-box" data-letter="الشين" data-video="{{ url_for('static', filename='videos/sheen.MOV') }}">
-        <h3>حرف الشين</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/sheen.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-
-     <div class="letter-box" data-letter="الشين" data-video="{{ url_for('static', filename='videos/sheen.MOV') }}">
-        <h3>حرف الشين</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/sheen.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-
-     <div class="letter-box" data-letter="الشين" data-video="{{ url_for('static', filename='videos/sheen.MOV') }}">
-        <h3>حرف الشين</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/sheen.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-     <div class="letter-box" data-letter="الشين" data-video="{{ url_for('static', filename='videos/sheen.MOV') }}">
-        <h3>حرف الشين</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/sheen.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-
-     <div class="letter-box" data-letter="الشين" data-video="{{ url_for('static', filename='videos/sheen.MOV') }}">
-        <h3>حرف الشين</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/sheen.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-
-    <div class="letter-box" data-letter="الشين" data-video="{{ url_for('static', filename='videos/sheen.MOV') }}">
-        <h3>حرف الشين</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/sheen.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-
-    <div class="letter-box" data-letter="الشين" data-video="{{ url_for('static', filename='videos/sheen.MOV') }}">
-        <h3>حرف الشين</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/sheen.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-    <div class="letter-box" data-letter="الشين" data-video="{{ url_for('static', filename='videos/sheen.MOV') }}">
-        <h3>حرف الشين</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/sheen.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-    <div class="letter-box" data-letter="الشين" data-video="{{ url_for('static', filename='videos/sheen.MOV') }}">
-        <h3>حرف الشين</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/sheen.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-
-    <div class="letter-box" data-letter="الشين" data-video="{{ url_for('static', filename='videos/sheen.MOV') }}">
-        <h3>حرف الشين</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/sheen.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-
-    <div class="letter-box" data-letter="الشين" data-video="{{ url_for('static', filename='videos/sheen.MOV') }}">
-        <h3>حرف الشين</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/sheen.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-
-    <div class="letter-box" data-letter="الشين" data-video="{{ url_for('static', filename='videos/sheen.MOV') }}">
-        <h3>حرف الشين</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/sheen.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-
-    <div class="letter-box" data-letter="الشين" data-video="{{ url_for('static', filename='videos/sheen.MOV') }}">
-        <h3>حرف الشين</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/sheen.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-
-    <div class="letter-box" data-letter="الشين" data-video="{{ url_for('static', filename='videos/sheen.MOV') }}">
-        <h3>حرف الشين</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/sheen.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-    <div class="letter-box" data-letter="الشين" data-video="{{ url_for('static', filename='videos/sheen.MOV') }}">
-        <h3>حرف الشين</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/sheen.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-    <div class="letter-box" data-letter="الشين" data-video="{{ url_for('static', filename='videos/sheen.MOV') }}">
-        <h3>حرف الشين</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/sheen.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-    <div class="letter-box" data-letter="الشين" data-video="{{ url_for('static', filename='videos/sheen.MOV') }}">
-        <h3>حرف الشين</h3>
-        <div class="video-overlay">
-            <img src="{{ url_for('static', filename='images/sheen.jpg') }}" alt="Letter A sign">
-            <button class="play-button">▶</button>
-        </div>
-        <button class="try-button"><a href="{{ url_for('views.practice') }}">جرّب بنفسك</a>
-        </button>
-    </div>
-
-    
+    {% endfor %}
 </div>
+
 
 <!-- Partial view for the video -->
 <div id="video-viewer" class="video-viewer">

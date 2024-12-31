@@ -5,7 +5,16 @@ const videoPreview = document.getElementById('video-preview');
 const letterTitle = document.getElementById('letter-title');
 const closeViewerButton = document.getElementById('close-viewer');
 
-// Add click event to play buttons
+//mute videos 
+videoPreview.muted = true;
+
+videoPreview.addEventListener('volumechange', () => {
+    if (!videoPreview.muted) {
+        videoPreview.muted = true; // Re-mute the video if it is unmuted
+    }
+});
+
+// click event to play buttons
 playButtons.forEach(button => {
     const letterBox = button.closest('.letter-box');
     const letter = letterBox.dataset.letter;
@@ -22,7 +31,7 @@ playButtons.forEach(button => {
 
 // Close the video viewer when the "Close" button is clicked
 closeViewerButton.addEventListener('click', () => {
-    videoViewer.style.display = 'none';  // Hide the video modal
-    videoPreview.pause();  // Pause the video
-    videoPreview.src = '';  // Reset the video source
+    videoViewer.style.display = 'none';  
+    videoPreview.pause();  
+    videoPreview.src = ''; 
 });

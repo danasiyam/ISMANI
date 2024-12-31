@@ -10,7 +10,7 @@ from ultralytics import YOLO
 views = Blueprint('views', __name__)
 
 # Load your YOLOv8 model for letters
-yolo_model = YOLO('C:/Users/نور/Desktop/BackEnd/model/best.pt')
+yolo_model = YOLO('C:/Users/noora/Desktop/BackEnd/BackEnd/model/best.pt')
 
 
 # Mediapipe holistic for extracting keypoints

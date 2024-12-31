@@ -85,7 +85,7 @@ async function sendFrameToServer() {
 
 // Function to start detection
 function startDetection() {
-    intervalId = setInterval(sendFrameToServer, 1000); // Reduce interval for smoother detection
+    intervalId = setInterval(sendFrameToServer, 3000); // Reduce interval for smoother detection
 }
 
 // Event listeners for start and stop buttons
