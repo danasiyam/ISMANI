@@ -1,16 +1,52 @@
 const webcamElement = document.getElementById('webcam');
 const terminalElement = document.getElementById('terminal');
 const startWebcamButton = document.getElementById('start-webcam-btn');
-const stopWebcamButton = document.getElementById('stop-webcam-btn'); // Stop button
+const stopWebcamButton = document.getElementById('stop-webcam-btn');
 
 let isWebcamStarted = false;
 let intervalId = null;
+let expectedLetter = null; // Will be set from URL parameters
 
-// Function to update the terminal with the detected letters and actions
-function updateTerminal(detectedLetters, detectedActions) {
-    terminalElement.innerHTML = `
-        <p> ${detectedLetters || 'None'}</p>
-    `;
+// Get the expected letter from URL parameters when in learning mode
+function getExpectedLetterFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode');
+    if (mode === 'learn') {
+        expectedLetter = urlParams.get('expected_letter');
+        // Update terminal to show what letter to practice
+        terminalElement.innerHTML = `<p>قم بتجربة حرف ${expectedLetter}</p>`;
+    }
+}
+
+// Function to update the terminal with detection results and feedback
+function updateTerminal(detectedLetters) {
+    if (!expectedLetter) {
+        // Normal mode - just show detected letters
+        terminalElement.innerHTML = `
+            <p>${detectedLetters || 'لم يتم اكتشاف أي حرف'}</p>
+        `;
+    } else {
+        // Learning mode - check if the detected letter matches expected
+        const lastDetectedLetter = detectedLetters.trim().slice(-1); // Get last detected letter
+        
+        if (lastDetectedLetter === expectedLetter) {
+            terminalElement.innerHTML = `
+                <p class="success-message">أحسنت! لقد قمت بالإشارة الصحيحة لحرف ${expectedLetter}</p>
+                <p>الحرف المكتشف: ${detectedLetters}</p>
+            `;
+        } else if (detectedLetters) {
+            terminalElement.innerHTML = `
+                <p class="try-again-message">حاول مرة أخرى - تأكد من أن إشارتك واضحة</p>
+                <p>الحرف المتوقع: ${expectedLetter}</p>
+                <p>الحرف المكتشف: ${detectedLetters}</p>
+            `;
+        } else {
+            terminalElement.innerHTML = `
+                <p>قم بتجربة حرف ${expectedLetter}</p>
+                <p>لم يتم اكتشاف أي حرف بعد</p>
+            `;
+        }
+    }
 }
 
 // Function to start the webcam
@@ -24,7 +60,7 @@ async function startWebcam() {
         startDetection();
     } catch (error) {
         console.error('Error accessing the webcam:', error);
-        terminalElement.innerHTML = "<p>Unable to access the webcam.</p>";
+        terminalElement.innerHTML = "<p>لم نتمكن من الوصول إلى الكاميرا</p>";
     }
 }
 
@@ -43,7 +79,7 @@ function stopWebcam() {
     isWebcamStarted = false;
     stopWebcamButton.style.display = 'none';
     startWebcamButton.style.display = 'inline-block';
-    terminalElement.innerHTML += '<p>Detection stopped.</p>';
+    terminalElement.innerHTML = '<p>تم إيقاف الكشف</p>';
 }
 
 // Function to send a frame to the server for detection
@@ -61,7 +97,12 @@ async function sendFrameToServer() {
         const formData = new FormData();
         formData.append('frame', frameBlob);
 
-        const response = await fetch('/detect', {
+        // Add expected letter to request if in learning mode
+        const url = expectedLetter ? 
+            `/detect?expected_letter=${encodeURIComponent(expectedLetter)}` : 
+            '/detect';
+
+        const response = await fetch(url, {
             method: 'POST',
             body: formData,
         });
@@ -71,23 +112,26 @@ async function sendFrameToServer() {
         }
 
         const result = await response.json();
-        if (result.letters ) {
-            updateTerminal(result.letters); 
+        if (result.letters) {
+            updateTerminal(result.letters);
         } else if (result.error) {
             console.error(result.error);
-            updateTerminal('Detection failed.', null);
+            updateTerminal('فشل الكشف');
         }
     } catch (error) {
         console.error('Error sending frame:', error);
-        updateTerminal('Error processing frame.', null);
+        updateTerminal('خطأ في معالجة الإطار');
     }
 }
 
 // Function to start detection
 function startDetection() {
-    intervalId = setInterval(sendFrameToServer, 1000); // Reduce interval for smoother detection
+    intervalId = setInterval(sendFrameToServer, 1000);
 }
 
-// Event listeners for start and stop buttons
-startWebcamButton.addEventListener('click', startWebcam);
-stopWebcamButton.addEventListener('click', stopWebcam);
+// Initialize everything when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    getExpectedLetterFromURL();
+    startWebcamButton.addEventListener('click', startWebcam);
+    stopWebcamButton.addEventListener('click', stopWebcam);
+});

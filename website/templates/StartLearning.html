@@ -5,36 +5,36 @@
 
  {% block content%}
  {% set letters = [
-    {"name": "الالف", "video": "videos/Alef.MOV", "image": "images/alef.jpg"},
-    {"name": "الباء", "video": "videos/ba2.MOV", "image": "images/ba2.jpg"},
-    {"name": "التاء", "video": "videos/ta22.MOV", "image": "images/ta22.jpg"},
-    {"name": "الثاء", "video": "videos/tha22.MOV", "image": "images/tha22.jpg"},
-    {"name": "الجيم", "video": "videos/jeem.MOV", "image": "images/jeem.jpg"},
-    {"name": "الحاء", "video": "videos/7a2.MOV", "image": "images/7a2.jpg"},
-    {"name": "الخاء", "video": "videos/5a2.MOV", "image": "images/5a2.jpg"},
-    {"name": "الدال", "video": "videos/dal.MOV", "image": "images/dal.jpg"},
-    {"name": "الذال", "video": "videos/thal.MOV", "image": "images/thal.jpg"},
-    {"name": "الراء", "video": "videos/ra2.MOV", "image": "images/ra2.jpg"},
-    {"name": "الزين", "video": "videos/zain.MOV", "image": "images/zain.jpg"},
-    {"name": "السين", "video": "videos/seen.MOV", "image": "images/seen.jpg"},
-    {"name": "الشين", "video": "videos/sheen.MOV", "image": "images/sheen.jpg"},
-    {"name": "الصاد", "video": "videos/sad.MOV", "image": "images/sad.jpg"},
-    {"name": "الضاد", "video": "videos/daad.MOV", "image": "images/Dad.png"},
-    {"name": "الطاء", "video": "videos/ta2.MOV", "image": "images/tha2.jpg"},
-    {"name": "الظاء", "video": "videos/tha2.MOV", "image": "images/tha222.jpg"},
-    {"name": "العين", "video": "videos/Ain.MOV", "image": "images/ain.jpg"},
-    {"name": "الغين", "video": "videos/gheen.MOV", "image": "images/ghain.jpg"},
-    {"name": "الفاء", "video": "videos/fa2.MOV", "image": "images/fa2.jpg"},
-    {"name": "القاف", "video": "videos/qaf.MOV", "image": "images/qaf.jpg"},
-    {"name": "الكاف", "video": "videos/kaf.MOV", "image": "images/kaf.jpg"},
-    {"name": "اللام", "video": "videos/laam.MOV", "image": "images/laam.jpg"},
-    {"name": "الميم", "video": "videos/meem.MOV", "image": "images/meem.jpg"},
-    {"name": "النون", "video": "videos/noon.MOV", "image": "images/noon.png"},
-    {"name": "الهاء", "video": "videos/ha2.MOV", "image": "images/ha22.jpg"},
-    {"name": "الواو", "video": "videos/waw.MOV", "image": "images/waw.jpg"},
-    {"name": "الياء", "video": "videos/ya2.MOV", "image": "images/ya2.jpg"},
-    {"name": "التاء المبربوطة", "video": "videos/tahmarbota.MOV", "image": "images/ta2marbouta.jpg"},
-    {"name": "لا", "video": "videos/laa.MOV", "image": "images/laa.jpg"},
+    {"name": "الالف", "video": "videos/Alef.MOV", "image": "images/alef.jpg" , "id":"ا"},
+    {"name": "الباء", "video": "videos/ba2.MOV", "image": "images/ba2.jpg" , "id":"ب"},
+    {"name": "التاء", "video": "videos/ta22.MOV", "image": "images/ta22.jpg", "id":"ت"},
+    {"name": "الثاء", "video": "videos/tha22.MOV", "image": "images/tha22.jpg", "id":"ث"},
+    {"name": "الجيم", "video": "videos/jeem.MOV", "image": "images/jeem.jpg", "id":"ج"},
+    {"name": "الحاء", "video": "videos/7a2.MOV", "image": "images/7a2.jpg", "id":"ح"},
+    {"name": "الخاء", "video": "videos/5a2.MOV", "image": "images/5a2.jpg", "id":"خ"},
+    {"name": "الدال", "video": "videos/dal.MOV", "image": "images/dal.jpg", "id":"د"},
+    {"name": "الذال", "video": "videos/thal.MOV", "image": "images/thal.jpg", "id":"ذ"},
+    {"name": "الراء", "video": "videos/ra2.MOV", "image": "images/ra2.jpg", "id":"ر"},
+    {"name": "الزين", "video": "videos/zain.MOV", "image": "images/zain.jpg", "id":"ز"},
+    {"name": "السين", "video": "videos/seen.MOV", "image": "images/seen.jpg", "id":"س"},
+    {"name": "الشين", "video": "videos/sheen.MOV", "image": "images/sheen.jpg", "id":"ش"},
+    {"name": "الصاد", "video": "videos/sad.MOV", "image": "images/sad.jpg", "id":"ص"},
+    {"name": "الضاد", "video": "videos/daad.MOV", "image": "images/Dad.png", "id":"ض"},
+    {"name": "الطاء", "video": "videos/ta2.MOV", "image": "images/tha2.jpg", "id":"ط"},
+    {"name": "الظاء", "video": "videos/tha2.MOV", "image": "images/tha222.jpg", "id":"ظ"},
+    {"name": "العين", "video": "videos/Ain.MOV", "image": "images/ain.jpg", "id":"ع"},
+    {"name": "الغين", "video": "videos/gheen.MOV", "image": "images/ghain.jpg", "id":"غ"},
+    {"name": "الفاء", "video": "videos/fa2.MOV", "image": "images/fa2.jpg", "id":"ف"},
+    {"name": "القاف", "video": "videos/qaf.MOV", "image": "images/qaf.jpg", "id":"ق"},
+    {"name": "الكاف", "video": "videos/kaf.MOV", "image": "images/kaf.jpg", "id":"ك"},
+    {"name": "اللام", "video": "videos/laam.MOV", "image": "images/laam.jpg", "id":"ل"},
+    {"name": "الميم", "video": "videos/meem.MOV", "image": "images/meem.jpg", "id":"م"},
+    {"name": "النون", "video": "videos/noon.MOV", "image": "images/noon.png", "id":"ن"},
+    {"name": "الهاء", "video": "videos/ha2.MOV", "image": "images/ha22.jpg", "id":"ه"},
+    {"name": "الواو", "video": "videos/waw.MOV", "image": "images/waw.jpg", "id":"و"},
+    {"name": "الياء", "video": "videos/ya2.MOV", "image": "images/ya2.jpg" , "id":"ي"},
+    {"name": "التاء المبربوطة", "video": "videos/tahmarbota.MOV", "image": "images/ta2marbouta.jpg" , "id":"ة"},
+    {"name": "لا", "video": "videos/laa.MOV", "image": "images/laa.jpg", "id":"لا"},
 
 
 
@@ -49,7 +49,7 @@
             <button class="play-button">▶</button>
         </div>
         <button class="try-button">
-            <a href="{{ url_for('views.practice', mode='learn', expected_letter=letter.name) }}">جرّب بنفسك</a>
+            <a href="{{ url_for('views.practice', mode='learn', expected_letter=letter.id) }}">جرّب بنفسك</a>
         </button>
         
         

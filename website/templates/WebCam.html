@@ -4,6 +4,10 @@
 {% endblock %}
 
 {% block content %}
+<script>
+    window.practiceMode = "{{ mode }}";
+    window.expectedLetter = "{{ expected_letter }}";
+</script>
 <div class="container">
     <div class="webcam-box">
         <video id="webcam" autoplay playsinline></video>
@@ -15,4 +19,6 @@
     <button id="stop-webcam-btn" class="btn btn-danger mt-3" style="display: none;"style="background: #FA651B;border: none;width:200px">توقف</button> 
 </div>
 <script src="{{ url_for('static', filename='js/WebCam.js') }}"></script>
+<!-- In WebCam.html -->
+
 {% endblock %}

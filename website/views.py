@@ -12,6 +12,20 @@ views = Blueprint('views', __name__)
 # Load your YOLOv8 model for letters
 yolo_model = YOLO('C:/Users/noora/Desktop/BackEnd/BackEnd/model/best.pt')
 
+letters = []
+last_detected_time = time.time()
+DELAY_INTERVAL = 3  # Time interval between letter detections in seconds
+
+# Arabic dictionary mapping for letters - moved here for global access
+arabic_dict = {
+    'Ain': 'ع', 'Al': 'ال', 'Alef': 'ا', 'Beh': 'ب', 'Dad': 'ض', 
+    'Dal': 'د', 'Feh': 'ف', 'Ghain': 'غ', 'Hah': 'ح', 'Heh': 'ه',
+    'Jeem': 'ج', 'Kaf': 'ك', 'Khah': 'خ', 'Laa': 'لا', 'Lam': 'ل',
+    'Meem': 'م', 'Noon': 'ن', 'Qaf': 'ق', 'Reh': 'ر', 'Sad': 'ص',
+    'Seen': 'س', 'Sheen': 'ش', 'Tah': 'ط', 'Teh': 'ت', 'Teh_Marbuta': 'ة',
+    'Thal': 'ذ', 'Theh': 'ث', 'Waw': 'و', 'Yeh': 'ي', 'Zah': 'ظ', 'Zain': 'ز'
+}
+
 
 # Mediapipe holistic for extracting keypoints
 # mp_holistic = mp.solutions.holistic
@@ -19,7 +33,7 @@ yolo_model = YOLO('C:/Users/noora/Desktop/BackEnd/BackEnd/model/best.pt')
 # Server-side variables for letter detection
 letters = []
 last_detected_time = time.time()
-DELAY_INTERVAL = 3  # Time interval between letter detections in seconds
+DELAY_INTERVAL = 10  # Time interval between letter detections in seconds
 
 # Server-side variables for action detection
 sequence = []
@@ -54,15 +68,21 @@ def check_auth():
         return redirect(url_for('auth.login'))  
 
 
+# In views.py - handles both modes
 @views.route('/practice')
 def practice():
-    return render_template("WebCam.html")
-
+    mode = request.args.get('mode', 'normal')
+    expected_letter = request.args.get('expected_letter', None)
+    return render_template("WebCam.html", mode=mode, expected_letter=expected_letter)
 
 @views.route('/detect', methods=['POST'])
 def detect():
-    global letters, last_detected_time, sequence, sentence, predictions
+    global letters, last_detected_time
+    
     try:
+        mode = request.args.get('mode', 'normal')
+        expected_letter = request.args.get('expected_letter', None)
+
         # Get the image from the request
         img_data = request.files['frame'].read()
         np_img = np.frombuffer(img_data, np.uint8)
@@ -70,38 +90,61 @@ def detect():
 
         # Process the image for letter detection
         results = yolo_model(img)
-
+        
         current_time = time.time()
+        detected_label = None
+        
+        # Only process new detection if enough time has passed
         if current_time - last_detected_time >= DELAY_INTERVAL:
             for result in results:
                 for box in result.boxes:
-                    label = yolo_model.names[int(box.cls[0])]
+                    # Get the detected label
+                    detected_label = yolo_model.names[int(box.cls[0])]
+                    last_detected_time = current_time
+                    break  # Take the first detection
 
-                    # Arabic dictionary mapping for letters
-                    arabic_dict = {'Ain': 'ع','Al': 'ال','Alef': 'ا','Beh': 'ب','Dad': 'ض','Dal': 'د','Feh': 'ف','Ghain': 'غ','Hah': 'ح',
-                                   'Heh': 'ه','Jeem': 'ج','Kaf': 'ك','Khah': 'خ','Laa': 'لا','Lam': 'ل','Meem': 'م','Noon': 'ن','Qaf': 'ق',
-                                   'Reh': 'ر', 'Sad': 'ص','Seen': 'س','Sheen': 'ش','Tah': 'ط','Teh': 'ت','Teh_Marbuta': 'ة',
-                                   'Thal': 'ذ','Theh': 'ث','Waw': 'و','Yeh': 'ي','Zah': 'ظ','Zain': 'ز'}
-
-                    # Process detected letters and replace them with their Arabic equivalents
-                    if label == "space":
-                        letters.append(" ")  # For space
-                    elif label == "del":
-                        if letters:  # For delete, remove the last letter
+            # Normal speaking mode - connect letters
+            if mode == 'normal':
+                if detected_label:
+                    if detected_label == "space":
+                        letters.append(" ")
+                    elif detected_label == "del":
+                        if letters:
                             letters.pop()
                     else:
-                        # Map the detected label to its Arabic equivalent
-                        arabic_letter = arabic_dict.get(label, label)  # Default to label if not found
+                        arabic_letter = arabic_dict.get(detected_label, detected_label)
                         letters.append(arabic_letter)
+                
+                current_word = ''.join(letters)
+                return jsonify({'letters': current_word})
 
-                    # Update last detection time
-                    last_detected_time = current_time
+            # Learning mode - check if letter matches
+            else:
+                if detected_label:
+                    arabic_letter = arabic_dict.get(detected_label, detected_label)
+                    matches = (arabic_letter == expected_letter)
+                    return jsonify({
+                        'letters': arabic_letter,
+                        'matches': matches,
+                        'expected_letter': expected_letter
+                    })
+                else:
+                    return jsonify({
+                        'letters': None,
+                        'matches': False,
+                        'expected_letter': expected_letter
+                    })
 
-        # Combine letter results
-        current_word = ''.join(letters)
+        # If not enough time has passed, return current state
+        if mode == 'normal':
+            return jsonify({'letters': ''.join(letters)})
+        else:
+            return jsonify({
+                'letters': None,
+                'matches': False,
+                'expected_letter': expected_letter
+            })
 
-        return jsonify({
-            'letters': current_word,
-        })
     except Exception as e:
+        print(f"Error in detect route: {str(e)}")  # For debugging
         return jsonify({'error': str(e)})
