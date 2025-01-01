@@ -33,7 +33,7 @@ arabic_dict = {
 # Server-side variables for letter detection
 letters = []
 last_detected_time = time.time()
-DELAY_INTERVAL = 10  # Time interval between letter detections in seconds
+DELAY_INTERVAL = 6  # Time interval between letter detections in seconds
 
 # Server-side variables for action detection
 sequence = []

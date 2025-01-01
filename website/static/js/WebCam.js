@@ -5,30 +5,39 @@ const stopWebcamButton = document.getElementById('stop-webcam-btn');
 
 let isWebcamStarted = false;
 let intervalId = null;
-let expectedLetter = null; // Will be set from URL parameters
+let expectedLetter = null;
+let detectedWords = [];
 
-// Get the expected letter from URL parameters when in learning mode
+// Clear detection state
+function clearDetection() {
+    detectedWords = [];
+    updateTerminal('');
+}
+
+// Handle page reload and navigation
+window.addEventListener('beforeunload', clearDetection);
+window.addEventListener('popstate', clearDetection);
+
+// Extract expected letter from the URL
 function getExpectedLetterFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode');
     if (mode === 'learn') {
         expectedLetter = urlParams.get('expected_letter');
-        // Update terminal to show what letter to practice
         terminalElement.innerHTML = `<p>قم بتجربة حرف ${expectedLetter}</p>`;
     }
+    clearDetection(); // Clear state when URL params change
 }
 
-// Function to update the terminal with detection results and feedback
-function updateTerminal(detectedLetters) {
+// Update terminal with detected letters or status
+function updateTerminal(detectedLetters = '') {
     if (!expectedLetter) {
-        // Normal mode - just show detected letters
         terminalElement.innerHTML = `
             <p>${detectedLetters || 'لم يتم اكتشاف أي حرف'}</p>
         `;
     } else {
-        // Learning mode - check if the detected letter matches expected
-        const lastDetectedLetter = detectedLetters.trim().slice(-1); // Get last detected letter
-        
+        const lastDetectedLetter = detectedLetters.trim().slice(-1) || '';
+
         if (lastDetectedLetter === expectedLetter) {
             terminalElement.innerHTML = `
                 <p class="success-message">أحسنت! لقد قمت بالإشارة الصحيحة لحرف ${expectedLetter}</p>
@@ -49,22 +58,23 @@ function updateTerminal(detectedLetters) {
     }
 }
 
-// Function to start the webcam
+// Start webcam
 async function startWebcam() {
     try {
+        clearDetection(); // Reset state when starting webcam
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         webcamElement.srcObject = stream;
         isWebcamStarted = true;
         startWebcamButton.style.display = 'none';
         stopWebcamButton.style.display = 'inline-block';
-        startDetection();
+        startDetection(); // Start detection loop
     } catch (error) {
         console.error('Error accessing the webcam:', error);
         terminalElement.innerHTML = "<p>لم نتمكن من الوصول إلى الكاميرا</p>";
     }
 }
 
-// Function to stop the webcam and detection
+// Stop webcam
 function stopWebcam() {
     if (intervalId) {
         clearInterval(intervalId);
@@ -79,14 +89,15 @@ function stopWebcam() {
     isWebcamStarted = false;
     stopWebcamButton.style.display = 'none';
     startWebcamButton.style.display = 'inline-block';
+    clearDetection(); // Reset state when stopping webcam
     terminalElement.innerHTML = '<p>تم إيقاف الكشف</p>';
 }
 
-// Function to send a frame to the server for detection
+// Send frame to server for detection
 async function sendFrameToServer() {
-    try {
-        if (!isWebcamStarted) return;
+    if (!isWebcamStarted) return;
 
+    try {
         const canvas = document.createElement('canvas');
         canvas.width = webcamElement.videoWidth || 640;
         canvas.height = webcamElement.videoHeight || 480;
@@ -97,7 +108,6 @@ async function sendFrameToServer() {
         const formData = new FormData();
         formData.append('frame', frameBlob);
 
-        // Add expected letter to request if in learning mode
         const url = expectedLetter ? 
             `/detect?expected_letter=${encodeURIComponent(expectedLetter)}` : 
             '/detect';
@@ -124,12 +134,12 @@ async function sendFrameToServer() {
     }
 }
 
-// Function to start detection
+// Start detection loop
 function startDetection() {
     intervalId = setInterval(sendFrameToServer, 1000);
 }
 
-// Initialize everything when the page loads
+// Initialize everything on page load
 document.addEventListener('DOMContentLoaded', () => {
     getExpectedLetterFromURL();
     startWebcamButton.addEventListener('click', startWebcam);
