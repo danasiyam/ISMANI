@@ -61,6 +61,8 @@ function updateTerminal(detectedLetters = '') {
 // Start webcam
 async function startWebcam() {
     try {
+        await fetch('/reset', { method: 'POST' });
+
         clearDetection(); // Reset state when starting webcam
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         webcamElement.srcObject = stream;

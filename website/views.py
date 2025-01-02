@@ -67,6 +67,12 @@ def check_auth():
     else:
         return redirect(url_for('auth.login'))  
 
+@views.route('/reset', methods=['POST'])
+def reset():
+        global letters
+        letters = []  # Clear the previous word
+        return jsonify({'status': 'reset'})
+
 
 # In views.py - handles both modes
 @views.route('/practice')
@@ -120,6 +126,8 @@ def detect():
 
             # Learning mode - check if letter matches
             else:
+                
+               
                 if detected_label:
                     arabic_letter = arabic_dict.get(detected_label, detected_label)
                     matches = (arabic_letter == expected_letter)
@@ -148,3 +156,5 @@ def detect():
     except Exception as e:
         print(f"Error in detect route: {str(e)}")  # For debugging
         return jsonify({'error': str(e)})
+    
+ 
