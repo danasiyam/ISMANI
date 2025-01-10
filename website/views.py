@@ -17,7 +17,7 @@ mp_holistic = mp.solutions.holistic
 mp_drawing = mp.solutions.drawing_utils
 # Load your YOLOv8 model for letters
 yolo_model = YOLO('D:/Modification/Gradproject/model/best.pt')
-actions=np.array(['السلام عليكم','كيف حالك','الحمدلله'])
+actions=np.array(['السلام عليكم','كيف حالك','الحمدلله','اين', ' ما اسمك','مع السلامة'])
 
 def createModel():
     model = Sequential()
@@ -34,7 +34,7 @@ def createModel():
 rnn_model = createModel()
 print("Model Summary:")
 rnn_model.summary()
-rnn_model.load_weights('D:/Modification/Gradproject/model/action.h5')
+rnn_model.load_weights('D:/Modification/Gradproject/model/Newaction.h5')
 
 sequence = []
 sentence = []
@@ -129,7 +129,9 @@ def reset():
 
 @views.route('/practiceWords')
 def practiceWords():
-    return render_template("WebCam2.html")
+    mode = request.args.get('mode', 'normal')
+    expected_letter = request.args.get('expected_letter', None)
+    return render_template("WebCam2.html", mode=mode, expected_letter=expected_letter)
 
 
 # In views.py - handles both modes
@@ -215,28 +217,31 @@ def detect():
         print(f"Error in detect route: {str(e)}")  # For debugging
         return jsonify({'error': str(e)})
     
-    
 @views.route('/detectWords', methods=['POST'])
 def detectWords():
     global sequence, sentence, predictions, THRESHOLD
     
     try:
+        # Get mode and expected letter from URL parameters
+        mode = request.args.get('mode', 'normal')
+        expected_letter = request.args.get('expected_letter', None)
+        
         # Get image from request
         img_data = request.files['frame'].read()
         np_img = np.frombuffer(img_data, np.uint8)
         img = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
         
         # Process with MediaPipe
-        with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
+        with mp_holistic.Holistic(min_detection_confidence=0.7, min_tracking_confidence=0.7) as holistic:
             image, results = mediapipe_detection(img, holistic)
             
             # Extract keypoints
             keypoints = extract_keypoints(results)
-            print(keypoints)
+            
             # Update sequence
             sequence.append(keypoints)
             sequence = sequence[-30:]  # Keep only last 30 frames
-            print(sequence)
+            
             # Make prediction when we have enough frames
             if len(sequence) == 30:
                 # Prepare input for prediction
@@ -247,25 +252,50 @@ def detectWords():
                 predicted_action_idx = np.argmax(res)
                 predictions.append(predicted_action_idx)
                 
-                # Process prediction
-                if len(predictions) > 10:
-                    predictions = predictions[-10:]  # Keep last 10 predictions
-                    
-                    if (np.unique(predictions[-10:])[0] == predicted_action_idx and 
-                        res[predicted_action_idx] > THRESHOLD):
-                        
-                        predicted_action = actions[predicted_action_idx]
-                        if not sentence or sentence[-1] != predicted_action:
-                            sentence.append(predicted_action)
-                            
-                        if len(sentence) > 5:
-                            sentence = sentence[-5:]
+                # Increase prediction stability by requiring more consistent predictions
+                if len(predictions) > 15:
+                    predictions = predictions[-15:]  # Increased from 10 to 15 for more stability
                 
+                # Require more consistent predictions and higher confidence
+                if (len(np.unique(predictions[-15:])) == 1 and  # All last 15 predictions must match
+                    res[predicted_action_idx] > THRESHOLD + 0.1):  # Increased confidence threshold
+                    
+                    predicted_action = actions[predicted_action_idx]
+                    
+                    # Only append if it's a new prediction and confidence is high
+                    if (not sentence or sentence[-1] != predicted_action):
+                        sentence.append(predicted_action)
+                    
+                    if len(sentence) > 5:
+                        sentence = sentence[-5:]
+                    
+                    # If in learning mode and expected_letter is provided
+                    if mode == 'learn' and expected_letter:
+                        latest_prediction = sentence[-1] if sentence else None
+                        # Compare the word ID with the detected word
+                        is_correct = latest_prediction == expected_letter
+                        
+                        return jsonify({
+                            'status': 'success',
+                            'letters': sentence,
+                            'confidence': float(res[predicted_action_idx]),
+                            'is_correct': is_correct,
+                            'expected': expected_letter,
+                            'predicted': latest_prediction,
+                            'prediction_count': len(predictions),
+                            'word_id': predicted_action  # Add the word ID to the response
+                        })
+                
+                # Default success response
                 return jsonify({
                     'status': 'success',
                     'letters': sentence,
-                    'confidence': float(res[predicted_action_idx])
+                    'confidence': float(res[predicted_action_idx]),
+                    'prediction_count': len(predictions),
+                    'word_id': actions[predicted_action_idx]  # Add the word ID to the response
                 })
+            
+            # Still collecting frames
             return jsonify({
                 'status': 'collecting',
                 'letters': sentence,
