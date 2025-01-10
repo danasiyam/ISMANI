@@ -5,7 +5,8 @@ let detectionInterval;
 let frameCount = 0;
 const REQUIRED_FRAMES = 30;
 let lastPredictionTime = 0;
-const PREDICTION_COOLDOWN = 2000; // 2 seconds cooldown between predictions
+const PREDICTION_COOLDOWN = 5000; // 5 seconds between showing predictions
+let canShowNewPrediction = true;
 
 // Get DOM elements
 const videoElement = document.getElementById('webcam');
@@ -44,6 +45,7 @@ async function startWebcam() {
         isWebcamActive = true;
         frameCount = 0;
         lastPredictionTime = 0;
+        canShowNewPrediction = true;
         
         startDetection();
     } catch (error) {
@@ -58,15 +60,9 @@ function startDetection() {
     canvas.height = videoElement.videoHeight;
     const ctx = canvas.getContext('2d');
     
+    // Capture and process frames more frequently for real-time detection
     detectionInterval = setInterval(async () => {
         if (!isWebcamActive) return;
-        
-        const currentTime = Date.now();
-        
-        // Only process new frames if enough time has passed since last prediction
-        if (currentTime - lastPredictionTime < PREDICTION_COOLDOWN) {
-            return;
-        }
         
         ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
         
@@ -89,46 +85,54 @@ function startDetection() {
             if (data.status === 'collecting') {
                 frameCount = data.frames_collected;
                 updateProgressBar();
-                terminal.innerHTML = `
-                    <p>جاري جمع الإطارات: ${frameCount}/${REQUIRED_FRAMES}</p>
-                    <div class="progress-bar">${progressBar.outerHTML}</div>
-                `;
-            } else if (data.status === 'success') {
-                const detectedWord = data.word_id; // Use word_id instead of letters array
-                const isCorrect = detectedWord === expectedWord;
-                
-                if (isCorrect) {
-                    lastPredictionTime = currentTime;
+                if (canShowNewPrediction) {
+                    terminal.innerHTML = `
+                        <p>جاري جمع الإطارات: ${frameCount}/${REQUIRED_FRAMES}</p>
+                        <div class="progress-bar">${progressBar.outerHTML}</div>
+                    `;
                 }
+            } else if (data.status === 'success') {
+                const detectedWord = data.word_id;
+                const isCorrect = detectedWord === expectedWord;
+                const currentTime = Date.now();
                 
-                terminal.innerHTML = `
-                    <div class="${isCorrect ? 'success-message' : 'error-message'}">
-                        <p>${isCorrect ? 'أحسنت! الكلمة صحيحة' : 'حاول مرة أخرى - الكلمة غير صحيحة'}</p>
-                        <p>الكلمة المتوقعة: ${expectedWord}</p>
-                        <p>الكلمة المكتشفة: ${detectedWord || 'لم يتم التعرف بعد'}</p>
-                        <p>نسبة الثقة: ${(data.confidence * 100).toFixed(2)}%</p>
-                    </div>
-                    <div class="progress-bar">${progressBar.outerHTML}</div>
-                `;
+                // Only update the display if we can show a new prediction
+                if (canShowNewPrediction) {
+                    lastPredictionTime = currentTime;
+                    canShowNewPrediction = false;
+                    
+                    terminal.innerHTML = `
+                        <div class="${isCorrect ? 'success-message' : 'error-message'}">
+                            <p>${isCorrect ? 'أحسنت! الكلمة صحيحة' : 'حاول مرة أخرى - الكلمة غير صحيحة'}</p>
+                            <p>الكلمة المتوقعة: ${expectedWord}</p>
+                            <p>الكلمة المكتشفة: ${detectedWord || 'لم يتم التعرف بعد'}</p>
+                        </div>
+                        <div class="progress-bar">${progressBar.outerHTML}</div>
+                    `;
 
-                // Reset frames only if prediction was incorrect
-                if (!isCorrect) {
+                    // Reset frames for next detection
                     frameCount = 0;
                     updateProgressBar();
-                    // Add a delay before allowing new predictions
+                    
+                    // Enable showing new prediction after cooldown
                     setTimeout(() => {
-                        terminal.innerHTML = `
-                            <p>حاول مرة أخرى</p>
-                            <div class="progress-bar">${progressBar.outerHTML}</div>
-                        `;
-                    }, 2000);
+                        canShowNewPrediction = true;
+                        if (!isCorrect) {
+                            terminal.innerHTML = `
+                                <p>جاري المراقبة...</p>
+                                <div class="progress-bar">${progressBar.outerHTML}</div>
+                            `;
+                        }
+                    }, PREDICTION_COOLDOWN);
                 }
             }
         } catch (error) {
             console.error('Error during detection:', error);
-            terminal.innerHTML = '<p>خطأ في عملية الكشف</p>';
+            if (canShowNewPrediction) {
+                terminal.innerHTML = '<p>خطأ في عملية الكشف</p>';
+            }
         }
-    }, 200); // 200ms interval = 5 FPS
+    }, 100); // Increased capture rate to 10 FPS for more responsive detection
 }
 
 function updateProgressBar() {
