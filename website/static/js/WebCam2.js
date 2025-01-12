@@ -3,9 +3,9 @@ let stream;
 let isWebcamActive = false;
 let detectionInterval;
 let frameCount = 0;
-const REQUIRED_FRAMES = 30;
+const REQUIRED_FRAMES = 15;
 let lastPredictionTime = 0;
-const PREDICTION_COOLDOWN = 5000; // 5 seconds between showing predictions
+const PREDICTION_COOLDOWN = 3000; // 5 seconds between showing predictions
 let canShowNewPrediction = true;
 
 // Get DOM elements
@@ -102,7 +102,7 @@ function startDetection() {
                     canShowNewPrediction = false;
                     
                     terminal.innerHTML = `
-                        <div class="${isCorrect ? 'success-message' : 'error-message'}">
+                        <div class="${isCorrect ? 'success-message' : 'try-again-message'}">
                             <p>${isCorrect ? 'أحسنت! الكلمة صحيحة' : 'حاول مرة أخرى - الكلمة غير صحيحة'}</p>
                             <p>الكلمة المتوقعة: ${expectedWord}</p>
                             <p>الكلمة المكتشفة: ${detectedWord || 'لم يتم التعرف بعد'}</p>

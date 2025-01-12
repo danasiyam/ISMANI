@@ -17,7 +17,7 @@ mp_holistic = mp.solutions.holistic
 mp_drawing = mp.solutions.drawing_utils
 # Load your YOLOv8 model for letters
 yolo_model = YOLO('D:/Modification/Gradproject/model/best.pt')
-actions=np.array(['السلام عليكم','كيف حالك','الحمدلله','اين', ' ما اسمك','مع السلامة'])
+actions=np.array(['السلام عليكم','كيف حالك','الحمدلله'])
 
 def createModel():
     model = Sequential()
@@ -32,17 +32,13 @@ def createModel():
     return model
 
 rnn_model = createModel()
-print("Model Summary:")
-rnn_model.summary()
-rnn_model.load_weights('D:/Modification/Gradproject/model/Newaction.h5')
+rnn_model.load_weights('D:/Modification/Gradproject/model/action.h5')
 
 sequence = []
 sentence = []
 predictions = []
 THRESHOLD = 0.5
-# letters = []
-# last_detected_time = time.time()
-# DELAY_INTERVAL = 3  # Time interval between letter detections in seconds
+
 
 # Arabic dictionary mapping for letters - moved here for global access
 arabic_dict = {
@@ -74,7 +70,7 @@ def draw_styled_landmarks(image,results):
     #Does not return the image rather applies the landmarks visualizations to the current image in place
 
 # Mediapipe holistic for extracting keypoints
-# mp_holistic = mp.solutions.holistic
+
 def mediapipe_detection(image, model):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) # COLOR CONVERSION BGR 2 RGB
     image.flags.writeable = False                  # Image is no longer writeable
@@ -94,7 +90,7 @@ def extract_keypoints(results):
 # Server-side variables for letter detection
 letters = []
 last_detected_time = time.time()
-DELAY_INTERVAL = 6  # Time interval between letter detections in seconds
+DELAY_INTERVAL = 2  # Time interval between letter detections in seconds
 
 @views.route('/')
 def home():
