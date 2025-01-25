@@ -5,7 +5,7 @@ let detectionInterval;
 let frameCount = 0;
 const REQUIRED_FRAMES = 15;
 let lastPredictionTime = 0;
-const PREDICTION_COOLDOWN = 3000; // 5 seconds between showing predictions
+const PREDICTION_COOLDOWN = 3000; // 3 seconds between showing predictions
 let canShowNewPrediction = true;
 
 // Get DOM elements

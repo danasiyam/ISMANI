@@ -16,14 +16,14 @@ def login():
         user = User.query.filter_by(email=email).first()
         if user:
             if check_password_hash(user.password, password):
-                flash('Logged in successfully!', category='success')
+                flash('تم تسجيل الدخول بنجاح', category='success')
                 login_user(user, remember=True)
                 return redirect(url_for('views.decide'))
             else:
-                flash('Incorrect password, try again.', category='error')
+                flash('كلمة السر خاطئة حاول مره اخرى', category='error')
         # if the user is not exists in database
         else:
-            flash('Email does not exist.', category='error')
+            flash('الايميل غير مستعمل', category='error')
 
     return render_template("login.html", user=current_user)
 

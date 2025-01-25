@@ -32,6 +32,7 @@ def createModel():
     return model
 
 rnn_model = createModel()
+rnn_model.summary()
 rnn_model.load_weights('D:/Modification/Gradproject/model/action.h5')
 
 sequence = []
@@ -228,7 +229,7 @@ def detectWords():
         img = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
         
         # Process with MediaPipe
-        with mp_holistic.Holistic(min_detection_confidence=0.7, min_tracking_confidence=0.7) as holistic:
+        with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
             image, results = mediapipe_detection(img, holistic)
             
             # Extract keypoints
@@ -249,25 +250,23 @@ def detectWords():
                 predictions.append(predicted_action_idx)
                 
                 # Increase prediction stability by requiring more consistent predictions
-                if len(predictions) > 15:
-                    predictions = predictions[-15:]  # Increased from 10 to 15 for more stability
                 
                 # Require more consistent predictions and higher confidence
-                if (len(np.unique(predictions[-15:])) == 1 and  # All last 15 predictions must match
-                    res[predicted_action_idx] > THRESHOLD + 0.1):  # Increased confidence threshold
+                if np.unique(predictions[-10:])[0] == np.argmax(res): 
+
+                    if res[np.argmax(res)] > THRESHOLD: 
+                        if len(sentence) > 0: 
+                            if actions[np.argmax(res)] != sentence[-1]:
+                                sentence.append(actions[np.argmax(res)])
+                        else:
+                            sentence.append(actions[np.argmax(res)])
                     
-                    predicted_action = actions[predicted_action_idx]
-                    
-                    # Only append if it's a new prediction and confidence is high
-                    if (not sentence or sentence[-1] != predicted_action):
-                        sentence.append(predicted_action)
-                    
-                    if len(sentence) > 5:
-                        sentence = sentence[-5:]
+                if len(sentence) > 5:
+                    sentence = sentence[-5:]
                     
                     # If in learning mode and expected_letter is provided
                     if mode == 'learn' and expected_letter:
-                        latest_prediction = sentence[-1] if sentence else None
+                        latest_prediction = sentence[-3] if sentence else None
                         # Compare the word ID with the detected word
                         is_correct = latest_prediction == expected_letter
                         
@@ -279,7 +278,7 @@ def detectWords():
                             'expected': expected_letter,
                             'predicted': latest_prediction,
                             'prediction_count': len(predictions),
-                            'word_id': predicted_action  # Add the word ID to the response
+                            'word_id': actions[predicted_action_idx]  # Add the word ID to the response
                         })
                 
                 # Default success response
